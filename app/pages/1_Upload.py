@@ -11,7 +11,7 @@ import preprocessing  # noqa: E402
 import db as db_module  # noqa: E402
 import trends  # noqa: E402
 
-st.title("Upload")
+st.title(":material/upload_file: Upload")
 
 st.markdown(
     "Upload a patient-records CSV matching the unified schema "
@@ -21,17 +21,19 @@ st.markdown(
 
 raw_path = os.path.join(ROOT_DIR, "data", "raw", "patient_records.csv")
 
-col1, col2 = st.columns(2)
-with col1:
-    uploaded = st.file_uploader("Upload CSV", type=["csv"])
-with col2:
-    use_bundled = st.button(
-        "Use bundled hybrid dataset",
-        disabled=not os.path.exists(raw_path),
-        help="Loads data/raw/patient_records.csv (run src/dataset_builder.py first if missing).",
-    )
-    if not os.path.exists(raw_path):
-        st.caption("Not found yet — run `python src/dataset_builder.py` first.")
+with st.container(border=True):
+    col1, col2 = st.columns(2, vertical_alignment="bottom")
+    with col1:
+        uploaded = st.file_uploader("Upload CSV", type=["csv"])
+    with col2:
+        use_bundled = st.button(
+            "Use bundled hybrid dataset",
+            icon=":material/dataset:",
+            disabled=not os.path.exists(raw_path),
+            help="Loads data/raw/patient_records.csv (run src/dataset_builder.py first if missing).",
+        )
+        if not os.path.exists(raw_path):
+            st.caption("Not found yet — run `python src/dataset_builder.py` first.")
 
 df = None
 if uploaded is not None:
@@ -43,10 +45,10 @@ if df is not None:
     required = {"patient_id", "age", "sex", "location", "visit_date", "diagnosis"}
     missing = required - set(df.columns)
     if missing:
-        st.error(f"Missing required columns: {sorted(missing)}")
+        st.error(f"Missing required columns: {sorted(missing)}", icon=":material/error:")
     else:
-        st.success(f"Loaded {len(df)} rows.")
-        st.dataframe(df.head(10))
+        st.success(f"Loaded {len(df)} rows.", icon=":material/check_circle:")
+        st.dataframe(df.head(10), hide_index=True, width="stretch", alt="Preview of the first 10 uploaded rows")
 
         if "pending_raw" not in st.session_state or uploaded is not None:
             if uploaded is not None:
@@ -54,7 +56,10 @@ if df is not None:
                 df.to_csv(raw_path, index=False)
             st.session_state["pending_raw"] = True
 
-        if st.button("Run preprocessing → load database → compute trends", type="primary"):
+        if st.button(
+            "Run preprocessing → load database → compute trends",
+            type="primary", icon=":material/play_arrow:",
+        ):
             with st.spinner("Preprocessing..."):
                 clean_df, train_df, val_df, test_df = preprocessing.run()
             with st.spinner("Loading database..."):
@@ -64,5 +69,6 @@ if df is not None:
             clear_cache()
             st.success(
                 "Done. Visit Trends Overview, Geographic View, or Demographic View "
-                "to see results."
+                "to see results.",
+                icon=":material/check_circle:",
             )

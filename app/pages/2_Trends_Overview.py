@@ -1,30 +1,45 @@
 import os
 import sys
 import streamlit as st
-import plotly.express as px
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import load_trend_reports  # noqa: E402
+from common import load_trend_reports, load_kpis  # noqa: E402
 
-st.title("Trends Overview")
+st.title(":material/timeline: Trends overview")
 
 df = load_trend_reports()
 if df.empty:
-    st.warning("No trend data yet — go to the Upload page first.")
+    st.info("No trend data yet — open Upload first.", icon=":material/upload_file:")
     st.stop()
 
+kpis = load_kpis()
+with st.container(horizontal=True):
+    st.metric("Total records", f"{kpis['total']:,}", border=True)
+    for disease, count in sorted(kpis["by_disease"].items(), key=lambda kv: -kv[1]):
+        st.metric(disease.title(), f"{count:,}", border=True)
+
+st.divider()
+
 diseases = sorted(df["disease_code"].unique())
-selected = st.multiselect("Disease", diseases, default=diseases)
-filtered = df[df["disease_code"].isin(selected)]
+selected = st.pills("Disease", diseases, selection_mode="multi", default=diseases)
+filtered = df[df["disease_code"].isin(selected)] if selected else df
 
-monthly = filtered.groupby(["period", "disease_code"], as_index=False)["trend_value"].sum()
-fig = px.line(
-    monthly, x="period", y="trend_value", color="disease_code", markers=True,
-    labels={"period": "Month", "trend_value": "Case count", "disease_code": "Disease"},
-    title="Case counts over time",
-)
-st.plotly_chart(fig, use_container_width=True)
+with st.container(border=True):
+    st.subheader("Case counts over time")
+    monthly = (
+        filtered.groupby(["period", "disease_code"], as_index=False)["trend_value"]
+        .sum()
+        .pivot(index="period", columns="disease_code", values="trend_value")
+        .fillna(0)
+    )
+    st.line_chart(monthly, alt="Monthly case counts by disease")
 
-st.subheader("Totals by disease")
-totals = filtered.groupby("disease_code", as_index=False)["trend_value"].sum().sort_values("trend_value", ascending=False)
-st.dataframe(totals, use_container_width=True)
+with st.container(border=True):
+    st.subheader("Totals by disease")
+    totals = (
+        filtered.groupby("disease_code", as_index=False)["trend_value"]
+        .sum()
+        .sort_values("trend_value", ascending=False)
+        .rename(columns={"disease_code": "Disease", "trend_value": "Total cases"})
+    )
+    st.dataframe(totals, hide_index=True, width="stretch", alt="Total cases by disease")

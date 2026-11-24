@@ -55,5 +55,15 @@ def load_clustered_records():
     return pd.read_csv(path)
 
 
+@st.cache_data(ttl=60)
+def load_kpis():
+    """Total records and per-disease counts, for the KPI row on every page."""
+    df = load_patient_diagnoses()
+    if df.empty:
+        return {"total": 0, "by_disease": {}}
+    counts = df["disease_code"].value_counts()
+    return {"total": len(df), "by_disease": counts.to_dict()}
+
+
 def clear_cache():
     st.cache_data.clear()

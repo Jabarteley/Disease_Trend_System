@@ -1,0 +1,99 @@
+# Dense dual-mode dashboard theme, retinted to a clinical/epidemiology teal.
+# Based on the Streamlit skill's dense-dashboard template.
+
+[theme]
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "6px"
+buttonRadius = "6px"
+font = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+baseFontSize = 14
+baseFontWeight = 400
+codeFontSize = "13px"
+headingFontSizes = ["28px", "22px", "18px", "16px", "14px", "12px"]
+headingFontWeights = [700, 600, 600, 600, 500, 500]
+linkUnderline = false
+paddingTop = "0.5rem"
+paddingBottom = "3rem"
+
+[theme.light]
+primaryColor = "#00685F"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F2F3FF"
+codeBackgroundColor = "#F1F5F9"
+textColor = "#131B2E"
+linkColor = "#00685F"
+borderColor = "#DAE2FD"
+codeTextColor = "#334155"
+greenColor = "#00685F"
+redColor = "#BA1A1A"
+yellowColor = "#D97706"
+orangeColor = "#EA580C"
+blueColor = "#4B41E1"
+violetColor = "#4B41E1"
+grayColor = "#64748B"
+chartCategoricalColors = [
+    "#00685F",
+    "#BA1A1A",
+    "#4B41E1",
+    "#D97706",
+    "#0284C7",
+    "#64748B",
+    "#EA580C",
+    "#7C3AED",
+]
+dataframeBorderColor = "#DAE2FD"
+dataframeHeaderBackgroundColor = "#F2F3FF"
+dataframeHeaderTextColor = "#131B2E"
+
+[theme.dark]
+primaryColor = "#6BD8CB"
+backgroundColor = "#0F172A"
+secondaryBackgroundColor = "#1E293B"
+codeBackgroundColor = "#1E293B"
+textColor = "#EEF0FF"
+linkColor = "#6BD8CB"
+borderColor = "#334155"
+codeTextColor = "#CBD5E1"
+greenColor = "#6BD8CB"
+redColor = "#F87171"
+yellowColor = "#FBBF24"
+orangeColor = "#FB923C"
+blueColor = "#B9C7DF"
+violetColor = "#B9C7DF"
+grayColor = "#94A3B8"
+chartCategoricalColors = [
+    "#6BD8CB",
+    "#F87171",
+    "#B9C7DF",
+    "#FBBF24",
+    "#38BDF8",
+    "#94A3B8",
+    "#FB923C",
+    "#A78BFA",
+]
+dataframeBorderColor = "#334155"
+dataframeHeaderBackgroundColor = "#1E293B"
+dataframeHeaderTextColor = "#F8FAFC"
+
+[theme.sidebar]
+paddingTop = "0.5rem"
+paddingBottom = "1.5rem"
+
+[theme.light.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F2F3FF"
+textColor = "#131B2E"
+borderColor = "#DAE2FD"
+primaryColor = "#00685F"
+linkColor = "#00685F"
+
+[theme.dark.sidebar]
+backgroundColor = "#020617"
+secondaryBackgroundColor = "#1E293B"
+textColor = "#EEF0FF"
+borderColor = "#334155"
+primaryColor = "#6BD8CB"
+linkColor = "#6BD8CB"
