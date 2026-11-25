@@ -18,7 +18,10 @@ from sklearn.preprocessing import LabelEncoder
 RAW_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "raw", "patient_records.csv")
 PROCESSED_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "processed")
 
-CLINICAL_COLUMNS = ["glucose", "bmi", "hba1c", "malaria_parasite_grade"]
+CLINICAL_COLUMNS = [
+    "glucose", "bmi", "hba1c", "blood_pressure_systolic", "family_history", "hypertension",
+    "malaria_parasite_grade", "widal_o", "widal_h",
+]
 SEED = 42
 
 

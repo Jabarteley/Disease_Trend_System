@@ -38,10 +38,24 @@ file (it has no patient-level fields to merge).
 
 Output: data/raw/patient_records.csv, in the unified schema:
   patient_id, age, sex, location, visit_date, diagnosis,
-  glucose, bmi, hba1c, malaria_parasite_grade
+  glucose, bmi, hba1c, blood_pressure_systolic, family_history, hypertension,
+  malaria_parasite_grade, widal_o, widal_h
 
 Disease-specific clinical columns are NaN where not applicable to that
 diagnosis - preprocessing.py handles that before modelling.
+
+Two real signals were added after an initial accuracy review found they
+had been collected but left unused:
+  - widal_o / widal_h: the real Widal test O and H antigen titers (e.g.
+    "160  80" in the source) - this is literally the real diagnostic
+    evidence the Unwana study used to tell typhoid-positive patients apart
+    from malaria-only patients, so including it (rather than only the MP
+    malaria-parasite grade, which both groups have since the typhoid group
+    is also malaria-positive) is what actually lets the classifier learn
+    the real distinction instead of guessing from a shared signal.
+  - family_history / hypertension: real Yes/No risk-factor fields in the
+    diabetes source, encoded 0/1, previously left out of the feature set
+    for no principled reason.
 """
 import os
 import sys
@@ -112,6 +126,7 @@ def load_diabetes_real():
 
     rng = np.random.default_rng(RNG_SEED)
     n = len(df)
+    yes_no = {"Yes": 1, "No": 0}
     out = pd.DataFrame({
         "patient_id": [f"DIA{i:05d}" for i in range(n)],
         "age": df["Age"].astype(int),
@@ -122,9 +137,27 @@ def load_diabetes_real():
         "glucose": df["Glucose_Level"].astype(float),
         "bmi": df["BMI"].astype(float),
         "hba1c": df["HbA1c"].astype(float),
+        "blood_pressure_systolic": df["Blood_Pressure_Systolic"].astype(float),
+        "family_history": df["Family_History"].map(yes_no),
+        "hypertension": df["Hypertension_Status"].map(yes_no),
         "malaria_parasite_grade": np.nan,
+        "widal_o": np.nan,
+        "widal_h": np.nan,
     })
     return out
+
+
+def _parse_widal(raw):
+    """'160  80' -> (160, 80); the real O and H antigen titer pair from the
+    Widal test. Both sheets have this column (malaria-only patients were
+    also tested, and came back at baseline), so it is this pair - not the
+    malaria-only MP grade - that is the real signal separating a
+    typhoid-positive diagnosis from a malaria-only one.
+    """
+    parts = str(raw).split()
+    if len(parts) != 2:
+        return (np.nan, np.nan)
+    return (float(parts[0]), float(parts[1]))
 
 
 def _load_unwana_sheet(sheet_name, diagnosis, rng):
@@ -134,6 +167,10 @@ def _load_unwana_sheet(sheet_name, diagnosis, rng):
     df = pd.read_excel(UNWANA_SOURCE, sheet_name=sheet_name, header=2)
     df.columns = [str(c).strip() for c in df.columns]
     df = df.dropna(subset=["SEX", "AGE"]).reset_index(drop=True)
+
+    widal = df["WIDAL  O        H"].apply(_parse_widal)
+    widal_o = widal.apply(lambda t: t[0])
+    widal_h = widal.apply(lambda t: t[1])
 
     n = len(df)
     prefix = "MAL" if diagnosis == "malaria" else "TYP"
@@ -147,9 +184,14 @@ def _load_unwana_sheet(sheet_name, diagnosis, rng):
         "glucose": np.nan,
         "bmi": np.nan,
         "hba1c": np.nan,
+        "blood_pressure_systolic": np.nan,
+        "family_history": np.nan,
+        "hypertension": np.nan,
         # Real qualitative malaria parasite density grade (MP test result:
         # 1+/2+/3+), encoded numerically - not an absolute parasite count.
         "malaria_parasite_grade": df["MP"].astype(str).str.strip().map(MP_GRADE),
+        "widal_o": widal_o,
+        "widal_h": widal_h,
     })
     return out
 

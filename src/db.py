@@ -51,12 +51,14 @@ def load_patient_records(df, conn=None):
         visit_id = cur.lastrowid
         cur.execute(
             """INSERT INTO diagnosis
-               (visit_id, disease_code, disease_name, glucose, bmi, hba1c, malaria_parasite_grade)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
+               (visit_id, disease_code, disease_name, glucose, bmi, hba1c, blood_pressure_systolic,
+                family_history, hypertension, malaria_parasite_grade, widal_o, widal_h)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 visit_id, row["diagnosis"], row["diagnosis"],
-                row.get("glucose"), row.get("bmi"), row.get("hba1c"),
-                row.get("malaria_parasite_grade"),
+                row.get("glucose"), row.get("bmi"), row.get("hba1c"), row.get("blood_pressure_systolic"),
+                row.get("family_history"), row.get("hypertension"),
+                row.get("malaria_parasite_grade"), row.get("widal_o"), row.get("widal_h"),
             ),
         )
     conn.commit()

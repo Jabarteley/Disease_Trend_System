@@ -22,7 +22,12 @@ CREATE TABLE IF NOT EXISTS diagnosis (
     glucose REAL,
     bmi REAL,
     hba1c REAL,
+    blood_pressure_systolic REAL,
+    family_history REAL,         -- real Yes/No family-history-of-diabetes flag, 0/1-encoded
+    hypertension REAL,           -- real Yes/No hypertension-status flag, 0/1-encoded
     malaria_parasite_grade REAL, -- real qualitative MP test result (1+/2+/3+), numeric-encoded
+    widal_o REAL,                -- real Widal test O antigen titer
+    widal_h REAL,                -- real Widal test H antigen titer
     FOREIGN KEY (visit_id) REFERENCES visit(visit_id)
 );
 

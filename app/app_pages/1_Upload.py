@@ -21,8 +21,9 @@ page_header(
 
 st.markdown(
     "Upload a patient-records CSV matching the unified schema "
-    "(`patient_id, age, sex, location, visit_date, diagnosis, glucose, bmi, "
-    "hba1c, malaria_parasite_grade`), or use the bundled real dataset."
+    "(`patient_id, age, sex, location, visit_date, diagnosis, glucose, bmi, hba1c, "
+    "blood_pressure_systolic, family_history, hypertension, malaria_parasite_grade, "
+    "widal_o, widal_h`), or use the bundled real dataset."
 )
 
 raw_path = os.path.join(ROOT_DIR, "data", "raw", "patient_records.csv")
