@@ -114,6 +114,54 @@ def clear_cache():
     st.cache_data.clear()
 
 
+DISEASE_COLORS = {
+    "diabetes": "#4B41E1",
+    "malaria": "#00685F",
+    "typhoid": "#BA1A1A",
+    "none": "#64748B",
+}
+
+
+def inject_theme_css():
+    """Shared CSS for consistent page chrome across every page. Targets only
+    .st-key-* classes generated from our own container keys, per Streamlit's
+    guidance - never private/internal Streamlit classes."""
+    st.html(
+        """
+        <style>
+        .st-key-app-header {
+            background: linear-gradient(135deg, #00685F 0%, #004940 100%);
+            border-radius: 12px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1rem;
+        }
+        .st-key-app-header h1, .st-key-app-header p, .st-key-app-header span {
+            color: #FFFFFF !important;
+        }
+        .st-key-page-banner {
+            border-left: 4px solid #00685F;
+            border-radius: 8px;
+            background: #F2F3FF;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .st-key-page-banner h2 { margin: 0; }
+        </style>
+        """
+    )
+
+
+def page_header(title, subtitle=None):
+    """A consistent banner for every secondary page, replacing a bare
+    st.title() so the app reads as one cohesive product instead of eight
+    independently-styled pages."""
+    inject_theme_css()
+    with st.container(key="page-banner"):
+        st.subheader(title)
+        if subtitle:
+            st.caption(subtitle)
+
+
 def auth_gate():
     """Require a signed-in user before rendering the rest of the page.
 

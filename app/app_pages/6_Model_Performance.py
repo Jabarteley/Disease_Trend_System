@@ -3,13 +3,13 @@ import sys
 import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import auth_gate, ROOT_DIR  # noqa: E402
+from common import auth_gate, page_header, ROOT_DIR  # noqa: E402
 
 auth_gate()
 
 sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
 
-st.title(":material/insights: Model performance")
+page_header(":material/insights: Model performance", "Train and evaluate the classification and clustering models on demand.")
 
 with st.container(border=True):
     st.subheader(":material/forest: Classification (Random Forest)")

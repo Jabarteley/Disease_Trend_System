@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import clear_cache, auth_gate, ROOT_DIR, PROCESSED_DIR  # noqa: E402
+from common import clear_cache, auth_gate, page_header, ROOT_DIR, PROCESSED_DIR  # noqa: E402
 
 auth_gate()
 
@@ -13,7 +13,11 @@ import preprocessing  # noqa: E402
 import db as db_module  # noqa: E402
 import trends  # noqa: E402
 
-st.title(":material/upload_file: Upload")
+page_header(
+    ":material/upload_file: Upload",
+    "Replace the dataset, or manually re-run the pipeline. The bundled hybrid "
+    "dataset loads itself automatically on first visit — this page isn't required for normal use.",
+)
 
 st.markdown(
     "Upload a patient-records CSV matching the unified schema "

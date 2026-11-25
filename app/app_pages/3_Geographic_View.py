@@ -3,11 +3,11 @@ import sys
 import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import load_trend_reports, auth_gate  # noqa: E402
+from common import load_trend_reports, auth_gate, page_header  # noqa: E402
 
 auth_gate()
 
-st.title(":material/public: Geographic view")
+page_header(":material/public: Geographic view", "Case counts by Nigerian state, one disease at a time.")
 
 df = load_trend_reports()
 if df.empty:

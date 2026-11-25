@@ -3,13 +3,17 @@ import sys
 import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import load_clustered_records, clear_cache, auth_gate, ROOT_DIR  # noqa: E402
+from common import load_clustered_records, clear_cache, auth_gate, page_header, ROOT_DIR  # noqa: E402
 
 auth_gate()
 
 sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
 
-st.title(":material/hub: Clusters")
+page_header(
+    ":material/hub: Clusters",
+    "K-Means groups cases by demographic/geographic/seasonal similarity — run on demand, "
+    "since it's a heavier compute step than the other pages.",
+)
 
 if st.button("Run clustering now", icon=":material/play_arrow:"):
     import clustering

@@ -3,11 +3,11 @@ import sys
 import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import load_patient_diagnoses, auth_gate  # noqa: E402
+from common import load_patient_diagnoses, auth_gate, page_header  # noqa: E402
 
 auth_gate()
 
-st.title(":material/group: Demographic view")
+page_header(":material/group: Demographic view", "Cases broken down by age group and sex, per disease.")
 
 df = load_patient_diagnoses()
 if df.empty:

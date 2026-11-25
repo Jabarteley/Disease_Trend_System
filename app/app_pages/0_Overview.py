@@ -6,7 +6,7 @@ import streamlit as st
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from common import (  # noqa: E402
     load_kpis, load_month_over_month, load_recent_aggregations, load_trend_reports,
-    auth_gate, clear_cache, db_exists, ROOT_DIR,
+    auth_gate, clear_cache, db_exists, inject_theme_css, DISEASE_COLORS, ROOT_DIR,
 )
 
 auth_gate()
@@ -16,12 +16,6 @@ DISEASE_ICONS = {
     "malaria": ":material/pest_control:",
     "typhoid": ":material/water_drop:",
     "none": ":material/health_and_safety:",
-}
-DISEASE_COLORS = {
-    "diabetes": "#4B41E1",
-    "malaria": "#00685F",
-    "typhoid": "#BA1A1A",
-    "none": "#64748B",
 }
 
 # --- One-time auto-bootstrap: if the bundled hybrid dataset exists but the
@@ -42,27 +36,12 @@ if not db_exists() and os.path.exists(RAW_PATH):
         except Exception as e:
             st.error(f"Could not auto-load the bundled dataset: {e}", icon=":material/error:")
 
+inject_theme_css()
 _kpi_css = "\n".join(
     f".st-key-kpi-{disease} {{ border-top: 4px solid {color}; border-radius: 10px; }}"
     for disease, color in DISEASE_COLORS.items()
 )
-st.html(
-    f"""
-    <style>
-    .st-key-app-header {{
-        background: linear-gradient(135deg, #00685F 0%, #004940 100%);
-        border-radius: 12px;
-        padding: 1.5rem 1.75rem;
-        margin-bottom: 1rem;
-    }}
-    .st-key-app-header h1, .st-key-app-header p, .st-key-app-header span {{
-        color: #FFFFFF !important;
-    }}
-    .st-key-kpi-total {{ border-top: 4px solid #515F74; border-radius: 10px; }}
-    {_kpi_css}
-    </style>
-    """
-)
+st.html(f"<style>.st-key-kpi-total {{ border-top: 4px solid #515F74; border-radius: 10px; }}\n{_kpi_css}</style>")
 
 with st.container(key="app-header"):
     header_col, status_col = st.columns([3, 2], vertical_alignment="center")

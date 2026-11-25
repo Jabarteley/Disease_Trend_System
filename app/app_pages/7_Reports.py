@@ -4,11 +4,11 @@ from datetime import datetime, timezone
 import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import load_trend_reports, auth_gate  # noqa: E402
+from common import load_trend_reports, auth_gate, page_header  # noqa: E402
 
 auth_gate()
 
-st.title(":material/description: Reports")
+page_header(":material/description: Reports", "Download a CSV summary of current case counts by disease and location.")
 
 df = load_trend_reports()
 if df.empty:
