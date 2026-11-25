@@ -144,11 +144,16 @@ def auth_gate():
         st.title(":material/monitoring: Disease trend analysis system")
         st.caption("Sign in to continue.")
         with st.container(border=True):
+            # Plain st.login() uses the single default [auth] provider in
+            # secrets.toml. Only pass a provider name (st.login("google")) if
+            # secrets.toml defines it under a matching [auth.google] section.
             if st.button("Log in with Google", icon=":material/login:", type="primary"):
                 try:
-                    st.login("google")
-                except Exception:
-                    _auth_not_configured()
+                    st.login()
+                except Exception as e:
+                    st.error(f"Login failed: {e}", icon=":material/error:")
+                    with st.expander("Full error details"):
+                        st.exception(e)
         st.stop()
 
     with st.sidebar:
