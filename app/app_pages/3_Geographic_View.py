@@ -3,7 +3,9 @@ import sys
 import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import load_trend_reports  # noqa: E402
+from common import load_trend_reports, auth_gate  # noqa: E402
+
+auth_gate()
 
 st.title(":material/public: Geographic view")
 

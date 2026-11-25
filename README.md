@@ -10,7 +10,8 @@ Full product requirements and implementation plan: see `docs/PRD.docx` (copied f
 - **Database:** SQLite
 - **ML:** scikit-learn (RandomForestClassifier for classification, KMeans for clustering)
 - **Data handling:** pandas, NumPy
-- **Charts:** Plotly
+- **Charts:** native Streamlit (`st.line_chart`, `st.bar_chart`, `st.scatter_chart`)
+- **Auth:** Streamlit's built-in `st.login`/`st.user` (real OIDC, not a password gate)
 
 ## Project structure
 
@@ -35,6 +36,21 @@ python -m venv venv
 venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 ```
+
+## Authentication
+
+The dashboard gates every page behind a real sign-in (`st.login`/`st.user`), per the PRD's "manage user account" requirement — not a hardcoded password. It needs a real OAuth identity provider; this repo can't generate those credentials for you.
+
+To set it up with Google:
+
+1. Go to https://console.cloud.google.com/apis/credentials and create an OAuth 2.0 Client ID (type: Web application)
+2. Add an authorized redirect URI: `http://localhost:8501/oauth2callback` (update this when you deploy)
+3. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml`
+4. Fill in `client_id`, `client_secret`, and a random `cookie_secret`
+
+Without this, every page shows a "Login is not configured yet" message instead of crashing.
+
+**Important:** after editing `common.py` or anything in `src/`, fully stop (Ctrl+C) and restart `streamlit run` — Streamlit hot-reloads the page script on save, but not modules it imports, so a browser refresh alone won't pick up the change.
 
 ## Build order (see PRD Section 12 for the full timeline)
 

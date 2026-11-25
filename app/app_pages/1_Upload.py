@@ -4,7 +4,9 @@ import streamlit as st
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import clear_cache, ROOT_DIR, PROCESSED_DIR  # noqa: E402
+from common import clear_cache, auth_gate, ROOT_DIR, PROCESSED_DIR  # noqa: E402
+
+auth_gate()
 
 sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
 import preprocessing  # noqa: E402
@@ -60,15 +62,20 @@ if df is not None:
             "Run preprocessing → load database → compute trends",
             type="primary", icon=":material/play_arrow:",
         ):
-            with st.spinner("Preprocessing..."):
-                clean_df, train_df, val_df, test_df = preprocessing.run()
-            with st.spinner("Loading database..."):
-                db_module.load_patient_records(clean_df)
-            with st.spinner("Computing trend reports..."):
-                trends.compute_trend_reports()
-            clear_cache()
-            st.success(
-                "Done. Visit Trends Overview, Geographic View, or Demographic View "
-                "to see results.",
-                icon=":material/check_circle:",
-            )
+            try:
+                with st.spinner("Preprocessing..."):
+                    clean_df, train_df, val_df, test_df = preprocessing.run()
+                with st.spinner("Loading database..."):
+                    db_module.load_patient_records(clean_df)
+                with st.spinner("Computing trend reports..."):
+                    trends.compute_trend_reports()
+                clear_cache()
+                st.success(
+                    "Done. Visit Trends Overview, Geographic View, or Demographic View "
+                    "to see results.",
+                    icon=":material/check_circle:",
+                )
+            except Exception as e:
+                st.error(f"Pipeline failed: {e}", icon=":material/error:")
+                with st.expander("Full error details"):
+                    st.exception(e)

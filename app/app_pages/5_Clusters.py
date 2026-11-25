@@ -3,7 +3,9 @@ import sys
 import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from common import load_clustered_records, clear_cache, ROOT_DIR  # noqa: E402
+from common import load_clustered_records, clear_cache, auth_gate, ROOT_DIR  # noqa: E402
+
+auth_gate()
 
 sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
 
@@ -11,10 +13,21 @@ st.title(":material/hub: Clusters")
 
 if st.button("Run clustering now", icon=":material/play_arrow:"):
     import clustering
-    with st.spinner("Running K-Means over a range of k, selecting the best by silhouette score..."):
-        clustering.run()
-    clear_cache()
-    st.success("Clustering complete.", icon=":material/check_circle:")
+    try:
+        with st.spinner("Running K-Means over a range of k, selecting the best by silhouette score..."):
+            clustering.run()
+        clear_cache()
+        st.success("Clustering complete.", icon=":material/check_circle:")
+    except FileNotFoundError:
+        st.error(
+            "No cleaned dataset found yet. Go to **Upload** first and run "
+            "preprocessing → load database → compute trends.",
+            icon=":material/error:",
+        )
+    except Exception as e:
+        st.error(f"Clustering failed: {e}", icon=":material/error:")
+        with st.expander("Full error details"):
+            st.exception(e)
 
 df = load_clustered_records()
 if df is None:
