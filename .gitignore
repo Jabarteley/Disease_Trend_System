@@ -3,6 +3,10 @@ data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+# The real + literature-informed synthetic hybrid dataset ships with the app
+# (see PRD Section 5) so it auto-loads on first run - nobody has to upload it.
+!data/raw/diabetes_dataset Version 2.csv
+!data/raw/patient_records.csv
 db/*.sqlite
 db/*.db
 models/*.joblib

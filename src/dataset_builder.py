@@ -32,7 +32,7 @@ import pandas as pd
 
 RNG_SEED = 42
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
-DIABETES_SOURCE = os.path.join(RAW_DIR, "diabetes_osun.csv")
+DIABETES_SOURCE = os.path.join(RAW_DIR, "diabetes_dataset Version 2.csv")
 OUTPUT_PATH = os.path.join(RAW_DIR, "patient_records.csv")
 
 # Nigerian states weighted toward where the cited literature draws its evidence from.
@@ -73,12 +73,16 @@ def _random_dates(rng, n, seasonal_weights=None):
 
 
 def load_diabetes_real():
-    """Load the real Osun State University diabetes dataset.
+    """Load the real Osun State University diabetes dataset
+    (https://data.mendeley.com/datasets/ksdk5m939c/1, CC BY 4.0).
 
-    ACTION required before running this: download the CSV from
-    https://data.mendeley.com/datasets/ksdk5m939c/1 and save it to
-    data/raw/diabetes_osun.csv (columns: Age, Gender, BMI, Blood Pressure,
-    Glucose, HbA1c, Family History, Hypertension, Diabetes Status).
+    Real file columns (confirmed from the actual downloaded CSV, not assumed):
+    Age, Gender, BMI, Blood_Pressure_Systolic, Glucose_Level, HbA1c,
+    Family_History, Hypertension_Status, Diabetes_Status (values
+    "Diabetic"/"Non-Diabetic", not 0/1). A small number of rows (~1-2%) have
+    missing Age or Gender; those are dropped since both are required fields
+    in the unified schema - everything else is kept, including rows with
+    missing clinical values, since those stay legitimately NaN downstream.
     """
     if not os.path.exists(DIABETES_SOURCE):
         raise FileNotFoundError(
@@ -89,16 +93,22 @@ def load_diabetes_real():
     df = pd.read_csv(DIABETES_SOURCE)
     df.columns = [c.strip() for c in df.columns]
 
+    before = len(df)
+    df = df.dropna(subset=["Age", "Gender"]).reset_index(drop=True)
+    dropped = before - len(df)
+    if dropped:
+        print(f"Diabetes source: dropped {dropped} rows with missing Age/Gender (kept {len(df)})")
+
     rng = np.random.default_rng(RNG_SEED)
     n = len(df)
     out = pd.DataFrame({
         "patient_id": [f"DIA{i:05d}" for i in range(n)],
         "age": df["Age"].astype(int),
-        "sex": df["Gender"].map({"Male": "M", "Female": "F", "M": "M", "F": "F"}).fillna("F"),
+        "sex": df["Gender"].map({"Male": "M", "Female": "F", "M": "M", "F": "F"}),
         "location": rng.choice(DIABETES_LOCATIONS, size=n, p=DIABETES_LOCATION_WEIGHTS),
         "visit_date": _random_dates(rng, n),
-        "diagnosis": np.where(df["Diabetes Status"].astype(int) == 1, "diabetes", "none"),
-        "glucose": df["Glucose Level"].astype(float),
+        "diagnosis": np.where(df["Diabetes_Status"] == "Diabetic", "diabetes", "none"),
+        "glucose": df["Glucose_Level"].astype(float),
         "bmi": df["BMI"].astype(float),
         "hba1c": df["HbA1c"].astype(float),
         "fever_days": np.nan,

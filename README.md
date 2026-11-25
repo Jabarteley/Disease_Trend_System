@@ -52,6 +52,15 @@ Without this, every page shows a "Login is not configured yet" message instead o
 
 **Important:** after editing `common.py` or anything in `src/`, fully stop (Ctrl+C) and restart `streamlit run` — Streamlit hot-reloads the page script on save, but not modules it imports, so a browser refresh alone won't pick up the change.
 
+## Dataset
+
+`data/raw/patient_records.csv` (built by `src/dataset_builder.py`, committed to this repo so the app auto-loads it on first run — see PRD Section 5) combines:
+
+- **Diabetes** — real clinical data, 1,500 records (1,479 after dropping rows with missing age/gender): [A Machine Learning Approach for Detecting Type 2 Diabetic Disease](https://data.mendeley.com/datasets/ksdk5m939c/1), Osun State University, Osogbo, Nigeria. Licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- **Typhoid & Malaria** — literature-informed synthetic records (no real Nigerian tabular dataset with the required age/sex/location/date schema exists for either, confirmed by searching Kaggle, Mendeley, Zenodo, Dryad, and the NCDC portal). Geographic and seasonal patterns follow Akinyemi et al. (2018) and Ayoka & Nnadi (2026) respectively — see the docstring in `src/dataset_builder.py` for exactly which assumption maps to which parameter.
+
+State this composition plainly in Chapter 4 — it's a defensible representative dataset per Chapter 1 Section 1.5, not a claim that the typhoid/malaria records are real observations.
+
 ## Build order (see PRD Section 12 for the full timeline)
 
 1. `src/dataset_builder.py` — assemble the hybrid dataset into the unified schema
