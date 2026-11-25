@@ -4,12 +4,13 @@ the diagnosis category (diabetes / typhoid / malaria / none).
 
 Feature note (document this in Chapter 4): clinical columns are
 disease-specific (e.g. glucose is only recorded for diabetes work-ups,
-parasite_density only for malaria). Missing values are filled with -1 so the
-model can split on "was this test even ordered" as its own signal - which is
-clinically realistic (the clinician already narrows down the suspected
-disease before ordering a disease-specific test), not just imputation noise.
-This is called out explicitly as a limitation: the model partly learns which
-tests were run rather than purely physiological patterns.
+malaria_parasite_grade only for malaria). Missing values are filled with -1
+so the model can split on "was this test even ordered" as its own signal -
+which is clinically realistic (the clinician already narrows down the
+suspected disease before ordering a disease-specific test), not just
+imputation noise. This is called out explicitly as a limitation: the model
+partly learns which tests were run rather than purely physiological
+patterns.
 """
 import os
 import joblib
@@ -22,7 +23,7 @@ MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
 
 FEATURE_COLUMNS = [
     "age", "sex_code", "location_code", "visit_month", "visit_season_code",
-    "glucose", "bmi", "hba1c", "fever_days", "parasite_density",
+    "glucose", "bmi", "hba1c", "malaria_parasite_grade",
 ]
 TARGET_COLUMN = "diagnosis"
 SEED = 42

@@ -22,8 +22,7 @@ CREATE TABLE IF NOT EXISTS diagnosis (
     glucose REAL,
     bmi REAL,
     hba1c REAL,
-    fever_days REAL,
-    parasite_density REAL,
+    malaria_parasite_grade REAL, -- real qualitative MP test result (1+/2+/3+), numeric-encoded
     FOREIGN KEY (visit_id) REFERENCES visit(visit_id)
 );
 
@@ -33,6 +32,7 @@ CREATE TABLE IF NOT EXISTS trend_report (
     period TEXT NOT NULL,      -- 'YYYY-MM'
     location TEXT NOT NULL,
     trend_value REAL NOT NULL, -- case count for that disease/period/location
+    source TEXT NOT NULL DEFAULT 'patient_records', -- 'patient_records' (computed from this app's dataset) or 'nmdr_surveillance' (real official aggregate import)
     generated_at TEXT NOT NULL
 );
 

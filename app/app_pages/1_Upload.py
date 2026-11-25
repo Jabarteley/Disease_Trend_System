@@ -15,14 +15,14 @@ import trends  # noqa: E402
 
 page_header(
     ":material/upload_file: Upload",
-    "Replace the dataset, or manually re-run the pipeline. The bundled hybrid "
+    "Replace the dataset, or manually re-run the pipeline. The bundled real "
     "dataset loads itself automatically on first visit — this page isn't required for normal use.",
 )
 
 st.markdown(
     "Upload a patient-records CSV matching the unified schema "
     "(`patient_id, age, sex, location, visit_date, diagnosis, glucose, bmi, "
-    "hba1c, fever_days, parasite_density`), or use the bundled hybrid dataset."
+    "hba1c, malaria_parasite_grade`), or use the bundled real dataset."
 )
 
 raw_path = os.path.join(ROOT_DIR, "data", "raw", "patient_records.csv")
@@ -33,7 +33,7 @@ with st.container(border=True):
         uploaded = st.file_uploader("Upload CSV", type=["csv"])
     with col2:
         use_bundled = st.button(
-            "Use bundled hybrid dataset",
+            "Use bundled dataset",
             icon=":material/dataset:",
             disabled=not os.path.exists(raw_path),
             help="Loads data/raw/patient_records.csv (run src/dataset_builder.py first if missing).",

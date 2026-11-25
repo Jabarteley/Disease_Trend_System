@@ -18,12 +18,12 @@ DISEASE_ICONS = {
     "none": ":material/health_and_safety:",
 }
 
-# --- One-time auto-bootstrap: if the bundled hybrid dataset exists but the
+# --- One-time auto-bootstrap: if the bundled dataset exists but the
 # database has never been built, load it automatically so nobody has to
 # click through Upload just to see the dashboard. ---
 RAW_PATH = os.path.join(ROOT_DIR, "data", "raw", "patient_records.csv")
 if not db_exists() and os.path.exists(RAW_PATH):
-    with st.spinner("First run: loading the bundled hybrid dataset into the database..."):
+    with st.spinner("First run: loading the dataset into the database..."):
         sys.path.insert(0, os.path.join(ROOT_DIR, "src"))
         import preprocessing
         import db as db_module
@@ -54,7 +54,7 @@ mom = load_month_over_month()
 
 if kpis["total"] == 0:
     st.info(
-        "No data loaded yet. Open **Upload** in the sidebar, use the bundled hybrid "
+        "No data loaded yet. Open **Upload** in the sidebar, use the bundled "
         "dataset (or upload your own CSV), and run the pipeline.",
         icon=":material/upload_file:",
     )
@@ -63,7 +63,7 @@ if kpis["total"] == 0:
 with status_col:
     with st.container(horizontal=True, horizontal_alignment="right"):
         st.badge("Pipeline ready", icon=":material/check_circle:", color="green")
-        st.badge(f"Dataset: hybrid N={kpis['total']:,}", icon=":material/database:", color="blue")
+        st.badge(f"Dataset: real, N={kpis['total']:,}", icon=":material/database:", color="blue")
         st.badge("RF + K-Means", icon=":material/psychology:", color="violet")
 
 # --- Real, data-driven alert: the disease with the largest month-over-month increase ---
@@ -145,11 +145,11 @@ with col_table:
 with col_insights:
     with st.container(border=True):
         st.subheader(":material/school: Dataset notes")
-        st.caption("What's real vs. literature-informed synthetic in this hybrid dataset — see PRD Section 5.")
+        st.caption("Every record in this system is real patient or real surveillance data — see README → Dataset for full sourcing.")
         st.markdown(
-            "- **Diabetes**: real clinical records (Osun State University dataset)\n"
-            "- **Malaria**: synthetic, seasonal pattern follows Ayoka & Nnadi (2026) — "
-            "rainy-season (Apr–Oct) peak, higher burden in under-5s\n"
-            "- **Typhoid**: synthetic, geographic concentration follows Akinyemi et al. "
-            "(2018) — Lagos, Kano, FCT Abuja"
+            "- **Diabetes**: real clinical records, 1,479 patients — Osun State University, Nigeria (Mendeley, CC BY 4.0)\n"
+            "- **Malaria & Typhoid**: real clinical records, 236 patients — Unwana malaria-typhoid "
+            "co-infection study, Ebonyi State (Mendeley, CC BY 4.0)\n"
+            "- **Malaria (extra)**: real official surveillance counts, 3 states × 10 years — "
+            "National Malaria Data Repository, via a 2026 PLOS ONE paper's supplementary data"
         )
